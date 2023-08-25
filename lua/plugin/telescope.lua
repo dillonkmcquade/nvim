@@ -27,4 +27,11 @@ return {
 	},
 	branch = "0.1.x",
 	dependencies = { "nvim-lua/plenary.nvim" },
+	keys = {
+		{ "<leader>ff" },
+		{ "<leader>gs" },
+		{ "<leader><Tab>" },
+		{ "<leader>fh" },
+		{ "<leader>gr" },
+	},
 }
