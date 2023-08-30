@@ -57,6 +57,7 @@ return {
 				servers = {
 					["null-ls"] = {
 						"javascript",
+						"python",
 						"typescript",
 						"css",
 						"html",
@@ -94,6 +95,7 @@ return {
 					null_ls.builtins.formatting.stylua,
 					null_ls.builtins.formatting.beautysh,
 					null_ls.builtins.formatting.gofumpt,
+					null_ls.builtins.formatting.black,
 				},
 			})
 
@@ -129,13 +131,12 @@ return {
 						require("luasnip").lsp_expand(args.body)
 					end,
 				},
-				mapping = {
+				mapping = cmp.mapping.preset.insert({
 					["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
 					["<C-n"] = cmp.mapping.select_next_item(cmp_select),
 					["<Tab>"] = cmp.mapping.confirm({ select = false }),
 					["<C-Space>"] = cmp.mapping.complete(),
-				},
-				preselect = cmp.PreselectMode.None,
+				}),
 				completion = {
 					completeopt = "menu,menuone,noinsert",
 				},
