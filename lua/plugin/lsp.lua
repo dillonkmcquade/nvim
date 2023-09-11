@@ -9,7 +9,7 @@ return {
 	},
 	{
 		"neovim/nvim-lspconfig",
-		cmd = "LspInfo",
+		cmd = { "LspInfo", "Mason" },
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			{ "hrsh7th/cmp-nvim-lsp" },
