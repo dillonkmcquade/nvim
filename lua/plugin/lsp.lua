@@ -15,7 +15,6 @@ return {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "williamboman/mason.nvim" },
-			{ "jose-elias-alvarez/null-ls.nvim" },
 		},
 		config = function()
 			local lsp = require("lsp-zero")
@@ -48,29 +47,10 @@ return {
 			--Configure lua language server for neovim
 			require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
 
-			-- Format on save
-			lsp.format_on_save({
-				format_opts = {
-					async = false,
-					timeout_ms = 10000,
-				},
-				servers = {
-					["null-ls"] = {
-						"javascript",
-						"python",
-						"typescript",
-						"css",
-						"html",
-						"json",
-						"jsonc",
-						"markdown",
-						"java",
-						"javascriptreact",
-						"typescriptreact",
-						"lua",
-						"sh",
-						"go",
-					},
+			require("lspconfig").jdtls.setup({
+				cmd = {
+					"jdtls",
+					"--jvm-arg=" .. string.format("-javaagent:%s", vim.fn.expand("$MASON/share/jdtls/lombok.jar")),
 				},
 			})
 
@@ -87,16 +67,6 @@ return {
 				warn = "▲",
 				hint = "⚑",
 				info = "»",
-			})
-			local null_ls = require("null-ls")
-			null_ls.setup({
-				sources = {
-					null_ls.builtins.formatting.prettier,
-					null_ls.builtins.formatting.stylua,
-					null_ls.builtins.formatting.beautysh,
-					null_ls.builtins.formatting.gofumpt,
-					null_ls.builtins.formatting.black,
-				},
 			})
 
 			lsp.setup()
