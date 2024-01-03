@@ -1,75 +1,98 @@
 return {
 	{
-		"VonHeikemen/lsp-zero.nvim",
-		branch = "v2.x",
-		lazy = true,
-		config = function()
-			require("lsp-zero.settings").preset({})
-		end,
-	},
-	{
-		"neovim/nvim-lspconfig",
+		"williamboman/mason-lspconfig.nvim",
 		cmd = { "LspInfo", "Mason" },
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
-			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "williamboman/mason-lspconfig.nvim" },
 			{ "williamboman/mason.nvim" },
+			{ "neovim/nvim-lspconfig" },
+			{ "hrsh7th/cmp-nvim-lsp" },
+			{ "folke/neodev.nvim" },
 		},
 		config = function()
-			local lsp = require("lsp-zero")
+			-- broadcast cmp_nvim capabilities to language servers
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
-			-- lsp keymaps, loaded on attach
-			lsp.on_attach(function(_, bufnr)
-				local nmap = function(keys, action, desc)
-					if desc then
-						desc = "LSP: " .. desc
-					end
-					vim.keymap.set("n", keys, action, { buffer = bufnr, remap = false, desc = desc })
-				end
-				lsp.default_keymaps({ buffer = bufnr })
-				nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-				nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-				nmap("<leader>vws", vim.lsp.buf.workspace_symbol, "Workspace symbols")
-				nmap("<leader>vd", vim.diagnostic.open_float, "Open float")
-				nmap("<leader>pr", vim.lsp.buf.format, "Format")
-				nmap("]d", vim.diagnostic.goto_next, "Go to next diagnostic")
-				nmap("[d", vim.diagnostic.goto_prev, "Go to previous diagnostic")
-				nmap("<leader>vca", vim.lsp.buf.code_action, "code actions")
-				nmap("<leader>vrr", vim.lsp.buf.references, "Open references")
-				nmap("<leader>vrn", vim.lsp.buf.rename, "Rename")
-				nmap("<leader>D", vim.lsp.buf.type_definition, "Type definition")
-				vim.keymap.set("i", "<C-h>", function()
-					vim.lsp.buf.signature_help()
-				end, { buffer = bufnr, remap = false, desc = "Signature help" })
-			end)
+			-- servers and their configurations
+			local servers = {
+				tsserver = {},
+				gopls = {},
+				html = { filetypes = { "html", "twig", "hbs" } },
+				eslint = {},
+				bashls = {},
+				dockerls = {},
+				docker_compose_language_service = {},
+				tailwindcss = {},
+				jdtls = {
+					cmd = {
+						"jdtls",
+						"--jvm-arg=" .. string.format("-javaagent:%s", vim.fn.expand("$MASON/share/jdtls/lombok.jar")),
+					},
+				},
+				lua_ls = {
+					Lua = {
+						workspace = {
+							checkThirdParty = false,
+						},
+						telemetry = { enable = false },
+					},
+				},
+			}
 
-			--Configure lua language server for neovim
-			require("lspconfig").lua_ls.setup(lsp.nvim_lua_ls())
+			-- Provides a lua_ls configuration
+			require("neodev").setup()
 
-			require("lspconfig").jdtls.setup({
-				cmd = {
-					"jdtls",
-					"--jvm-arg=" .. string.format("-javaagent:%s", vim.fn.expand("$MASON/share/jdtls/lombok.jar")),
+			require("mason").setup()
+
+			require("mason-lspconfig").setup({
+				ensure_installed = vim.tbl_keys(servers),
+				handlers = {
+					function(server_name)
+						require("lspconfig")[server_name].setup({
+							capabilities = capabilities,
+							settings = servers[server_name],
+							filetypes = (servers[server_name] or {}).filetypes,
+						})
+					end,
 				},
 			})
 
-			lsp.ensure_installed({
-				"tsserver",
-				"lua_ls",
-				"html",
-				"cssls",
+			-- lsp keymaps, loaded on attach
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+				callback = function(ev)
+					vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+					local nmap = function(keys, action, desc)
+						if desc then
+							desc = "LSP: " .. desc
+						end
+						vim.keymap.set("n", keys, action, { buffer = ev.buf, remap = false, desc = desc })
+					end
+					nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
+					nmap("K", vim.lsp.buf.hover, "Hover Documentation")
+					nmap("<leader>vws", vim.lsp.buf.workspace_symbol, "Workspace symbols")
+					nmap("<leader>vd", vim.diagnostic.open_float, "Open float")
+					nmap("<leader>pr", vim.lsp.buf.format, "Format")
+					nmap("]d", vim.diagnostic.goto_next, "Go to next diagnostic")
+					nmap("[d", vim.diagnostic.goto_prev, "Go to previous diagnostic")
+					nmap("<leader>vca", vim.lsp.buf.code_action, "code actions")
+					nmap("<leader>vrr", vim.lsp.buf.references, "Open references")
+					nmap("<leader>vrn", vim.lsp.buf.rename, "Rename")
+					nmap("<leader>D", vim.lsp.buf.type_definition, "Type definition")
+					vim.keymap.set("i", "<C-h>", function()
+						vim.lsp.buf.signature_help()
+					end, { buffer = ev.buf, remap = false, desc = "Signature help" })
+				end,
 			})
 
 			--Gutter icons
-			lsp.set_sign_icons({
+			--[[ lsp.set_sign_icons({
 				error = "✘",
 				warn = "▲",
 				hint = "⚑",
 				info = "»",
-			})
-
-			lsp.setup()
+			}) ]]
 		end,
 	},
 	{
