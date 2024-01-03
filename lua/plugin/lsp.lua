@@ -58,41 +58,34 @@ return {
 				},
 			})
 
-			-- lsp keymaps, loaded on attach
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-				callback = function(ev)
-					vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-					local nmap = function(keys, action, desc)
-						if desc then
-							desc = "LSP: " .. desc
-						end
-						vim.keymap.set("n", keys, action, { buffer = ev.buf, remap = false, desc = desc })
+			local set_sign_icons = function(opts)
+				opts = opts or {}
+
+				local sign = function(args)
+					if opts[args.name] == nil then
+						return
 					end
-					nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-					nmap("K", vim.lsp.buf.hover, "Hover Documentation")
-					nmap("<leader>vws", vim.lsp.buf.workspace_symbol, "Workspace symbols")
-					nmap("<leader>vd", vim.diagnostic.open_float, "Open float")
-					nmap("<leader>pr", vim.lsp.buf.format, "Format")
-					nmap("]d", vim.diagnostic.goto_next, "Go to next diagnostic")
-					nmap("[d", vim.diagnostic.goto_prev, "Go to previous diagnostic")
-					nmap("<leader>vca", vim.lsp.buf.code_action, "code actions")
-					nmap("<leader>vrr", vim.lsp.buf.references, "Open references")
-					nmap("<leader>vrn", vim.lsp.buf.rename, "Rename")
-					nmap("<leader>D", vim.lsp.buf.type_definition, "Type definition")
-					vim.keymap.set("i", "<C-h>", function()
-						vim.lsp.buf.signature_help()
-					end, { buffer = ev.buf, remap = false, desc = "Signature help" })
-				end,
-			})
+
+					vim.fn.sign_define(args.hl, {
+						texthl = args.hl,
+						text = opts[args.name],
+						numhl = "",
+					})
+				end
+
+				sign({ name = "error", hl = "DiagnosticSignError" })
+				sign({ name = "warn", hl = "DiagnosticSignWarn" })
+				sign({ name = "hint", hl = "DiagnosticSignHint" })
+				sign({ name = "info", hl = "DiagnosticSignInfo" })
+			end
 
 			--Gutter icons
-			--[[ lsp.set_sign_icons({
+			set_sign_icons({
 				error = "✘",
 				warn = "▲",
 				hint = "⚑",
 				info = "»",
-			}) ]]
+			})
 		end,
 	},
 	{
