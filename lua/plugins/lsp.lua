@@ -58,7 +58,7 @@ return {
 				},
 			})
 
-			local set_sign_icons = function(opts)
+			local function set_sign_icons(opts)
 				opts = opts or {}
 
 				local sign = function(args)
