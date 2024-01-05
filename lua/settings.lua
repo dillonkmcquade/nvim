@@ -15,10 +15,7 @@ vim.opt.incsearch = true
 vim.opt.scrolloff = 8
 vim.g.closetag_filenames = "*.html, *.xml, *.jsx, *.tsx, *.js"
 vim.g.netrw_liststyle = 0
---vim.opt.autochdir = true
---vim.g.netrw_banner = 0
--- vim.opt.colorcolumn = "80"
---vim.g.netrw_keepdir = 0
+
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "go",
 	command = "setlocal shiftwidth=4 tabstop=4",
