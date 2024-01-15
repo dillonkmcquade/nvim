@@ -16,6 +16,7 @@ return {
 			php = { "pint" },
 			sh = { "beautysh" },
 			markdown = { "prettierd" },
+			yaml = { "prettierd" },
 		},
 		format_on_save = {
 			timeout_ms = 500,
