@@ -1,23 +1,13 @@
 return {
-	--colorscheme
-	{
-		"rmehri01/onenord.nvim",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			require("onenord").setup({
-				disable = {
-					background = true,
-				},
-			})
-		end,
-	},
-
 	--Easy commenting
 	{
 		"numToStr/Comment.nvim",
 		opts = {},
 		lazy = false,
+	},
+	{
+		"stevearc/dressing.nvim",
+		opts = {},
 	},
 
 	--Auto finish tags
@@ -36,6 +26,7 @@ return {
 
 	--Wrap blocks of text
 	"tpope/vim-surround",
+	"tpope/vim-sleuth",
 
 	--Workflow
 	{

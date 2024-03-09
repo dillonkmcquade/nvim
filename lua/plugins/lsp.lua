@@ -20,10 +20,12 @@ return {
 				gopls = {},
 				html = { filetypes = { "html", "twig", "hbs" } },
 				eslint = {},
+				ruff_lsp = {},
 				bashls = {},
 				dockerls = {},
 				docker_compose_language_service = {},
-				tailwindcss = {},
+				texlab = {},
+				pyright = {},
 				jdtls = {
 					cmd = {
 						"jdtls",
