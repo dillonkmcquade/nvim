@@ -27,6 +27,7 @@ return {
 	},
 	branch = "0.1.x",
 	dependencies = { "nvim-lua/plenary.nvim" },
+	cmd = { "Telescope" },
 	keys = {
 		{ "<leader>ff" },
 		{ "<leader>gs" },
