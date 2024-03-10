@@ -14,6 +14,7 @@ return {
 			dap_virtual_text.setup({})
 
 			-- Configuration
+			vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
 
 			dap.listeners.after.event_initialized["dapui_config"] = function()
 				dapui.open()
@@ -34,6 +35,9 @@ return {
 						return
 					end
 					local func = commands[item]
+					require("notify")("Running " .. item, "info", {
+						title = "DAP",
+					})
 					func()
 				end)
 			end
