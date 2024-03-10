@@ -25,7 +25,7 @@ return {
 				dockerls = {},
 				docker_compose_language_service = {},
 				texlab = {},
-				pyright = {},
+				jedi_language_server = {},
 				jdtls = {
 					cmd = {
 						"jdtls",
