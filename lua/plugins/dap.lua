@@ -5,22 +5,11 @@ return {
 		dependencies = {
 			"rcarriga/nvim-dap-ui",
 			"theHamsta/nvim-dap-virtual-text",
-
-			--  Adapter configuration for specific languages
-			"leoluz/nvim-dap-go",
-			"mfussenegger/nvim-dap-python",
 		},
 		config = function()
-			local dap, dapui, dap_python, dap_go, dap_virtual_text =
-				require("dap"),
-				require("dapui"),
-				require("dap-python"),
-				require("dap-go"),
-				require("nvim-dap-virtual-text")
+			local dap, dapui, dap_virtual_text = require("dap"), require("dapui"), require("nvim-dap-virtual-text")
 
 			-- Setup
-			dap_python.setup("~/.virtualenvs/debugpy/bin/python")
-			dap_go.setup()
 			dapui.setup()
 			dap_virtual_text.setup({})
 
@@ -37,14 +26,7 @@ return {
 			end
 
 			-- For selecting DAP adapter with one keybind
-			local function dap_select()
-				local commands = {
-					["python - test method"] = dap_python.test_method,
-					["python - test class"] = dap_python.test_class,
-					["python - debug selection"] = dap_python.debug_selection,
-					go = dap_go.debug_test,
-				}
-
+			function Dap_select(commands)
 				vim.ui.select(vim.tbl_keys(commands), {
 					prompt = "Select a debug adapter to run",
 				}, function(item)
@@ -58,7 +40,38 @@ return {
 
 			-- Keymaps
 			vim.keymap.set("n", "<Leader>df", dapui.toggle, { desc = "Dap: Toggle DAP ui" })
-			vim.keymap.set("n", "<Leader>db", dap_select, { desc = "Dap: Select a debug adapter" })
+		end,
+	},
+	{
+		"leoluz/nvim-dap-go",
+		ft = { "go" },
+		config = function()
+			local dap_go = require("dap-go")
+			dap_go.setup()
+			local commands = {
+				go = dap_go.debug_test,
+			}
+
+			vim.keymap.set("n", "<Leader>db", function()
+				Dap_select(commands)
+			end, { desc = "Dap: Select a debug adapter" })
+		end,
+	},
+	{
+		"mfussenegger/nvim-dap-python",
+		ft = { "python" },
+		config = function()
+			local dap_python = require("dap-python")
+			dap_python.setup("/home/dillon/.virtualenvs/debugpy/bin/python")
+			local commands = {
+				["python - test method"] = dap_python.test_method,
+				["python - test class"] = dap_python.test_class,
+				["python - debug selection"] = dap_python.debug_selection,
+			}
+
+			vim.keymap.set("n", "<Leader>db", function()
+				Dap_select(commands)
+			end, { desc = "Dap: Select a debug adapter" })
 		end,
 	},
 }
