@@ -18,6 +18,7 @@ return {
 			local servers = {
 				tsserver = {},
 				gopls = {},
+				cssls = {},
 				html = { filetypes = { "html", "twig", "hbs" } },
 				eslint = {},
 				ruff_lsp = {},

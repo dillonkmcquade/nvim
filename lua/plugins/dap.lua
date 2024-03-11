@@ -17,59 +17,76 @@ end
 return {
 	{
 		"mfussenegger/nvim-dap",
-		ft = { "python", "go" },
 		dependencies = {
-			"rcarriga/nvim-dap-ui",
-			"theHamsta/nvim-dap-virtual-text",
+			{
+				"rcarriga/nvim-dap-ui",
+				opts = {},
+				config = function(_, opts)
+					local dap, dapui = require("dap"), require("dapui")
+					dapui.setup(opts)
+
+					-- Change breakpoint icon
+					vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
+
+					dap.listeners.after.event_initialized["dapui_config"] = function()
+						dapui.open({})
+					end
+					dap.listeners.before.event_terminated["dapui_config"] = function()
+						dapui.close({})
+					end
+					dap.listeners.before.event_exited["dapui_config"] = function()
+						dapui.close({})
+					end
+				end,
+				-- stylua: ignore
+				keys = {
+					{ "<Leader>df", function() require("dapui").toggle() end, { desc = "Dap: Toggle DAP ui" }, },
+				},
+			},
+			{
+				"theHamsta/nvim-dap-virtual-text",
+				opts = {},
+			},
+			{
+				"leoluz/nvim-dap-go",
+				config = function()
+					local dap_go = require("dap-go")
+					dap_go.setup()
+					local commands = {
+						go = dap_go.debug_test,
+					}
+
+					vim.keymap.set("n", "<Leader>db", function()
+						dap_select(commands)
+					end, { desc = "Dap: Select a debug adapter" })
+				end,
+			},
+			{
+				"mfussenegger/nvim-dap-python",
+				config = function()
+					local dap_python = require("dap-python")
+					dap_python.setup("/home/dillon/.virtualenvs/debugpy/bin/python")
+					local commands = {
+						["python - test method"] = dap_python.test_method,
+						["python - test class"] = dap_python.test_class,
+						["python - debug selection"] = dap_python.debug_selection,
+					}
+
+					vim.keymap.set("n", "<Leader>db", function()
+						dap_select(commands)
+					end, { desc = "Dap: Select a debug adapter" })
+				end,
+			},
 		},
-		config = function()
-			local dap, dapui, dap_virtual_text = require("dap"), require("dapui"), require("nvim-dap-virtual-text")
-
-			-- Setup
-			dapui.setup()
-			dap_virtual_text.setup({})
-
-			-- Configuration
-			vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
-
-			dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-			dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-			dap.listeners.before.event_exited["dapui_config"] = dapui.close
-
-			-- Keymaps
-			vim.keymap.set("n", "<Leader>df", dapui.toggle, { desc = "Dap: Toggle DAP ui" })
-		end,
-	},
-	{
-		"leoluz/nvim-dap-go",
-		ft = { "go" },
-		config = function()
-			local dap_go = require("dap-go")
-			dap_go.setup()
-			local commands = {
-				go = dap_go.debug_test,
-			}
-
-			vim.keymap.set("n", "<Leader>db", function()
-				dap_select(commands)
-			end, { desc = "Dap: Select a debug adapter" })
-		end,
-	},
-	{
-		"mfussenegger/nvim-dap-python",
-		ft = { "python" },
-		config = function()
-			local dap_python = require("dap-python")
-			dap_python.setup("/home/dillon/.virtualenvs/debugpy/bin/python")
-			local commands = {
-				["python - test method"] = dap_python.test_method,
-				["python - test class"] = dap_python.test_class,
-				["python - debug selection"] = dap_python.debug_selection,
-			}
-
-			vim.keymap.set("n", "<Leader>db", function()
-				dap_select(commands)
-			end, { desc = "Dap: Select a debug adapter" })
-		end,
+		-- stylua: ignore
+		keys = {
+			{ "<F5>", function() require("dap").continue() end, { desc = "Dap: continue" }, },
+			{ "<F6>", function() require("dap").step_over() end, { desc = "Dap: step over" }, },
+			{ "<F7>", function() require("dap").step_into() end, { desc = "Dap: step into" }, },
+			{ "<F8>", function() require("dap").step_out() end, { desc = "Dap: step out" }, },
+			{ "<Leader>b", function() require("dap").toggle_breakpoint() end, { desc = "Dap: Toggle breakpoint" }, },
+			{ "<Leader>dh", function() require("dap.ui.widgets").hover() end, { desc = "Dap: hover" }, },
+			{ "<Leader>dp", function() require("dap.ui.widgets").preview() end, { desc = "Dap: preview" }, },
+		},
 	},
 }
