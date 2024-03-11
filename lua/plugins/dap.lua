@@ -52,13 +52,6 @@ return {
 				config = function()
 					local dap_go = require("dap-go")
 					dap_go.setup()
-					local commands = {
-						go = dap_go.debug_test,
-					}
-
-					vim.keymap.set("n", "<Leader>db", function()
-						dap_select(commands)
-					end, { desc = "Dap: Select a debug adapter" })
 				end,
 			},
 			{
@@ -66,17 +59,9 @@ return {
 				config = function()
 					local dap_python = require("dap-python")
 					dap_python.setup("/home/dillon/.virtualenvs/debugpy/bin/python")
-					local commands = {
-						["python - test method"] = dap_python.test_method,
-						["python - test class"] = dap_python.test_class,
-						["python - debug selection"] = dap_python.debug_selection,
-					}
-
-					vim.keymap.set("n", "<Leader>db", function()
-						dap_select(commands)
-					end, { desc = "Dap: Select a debug adapter" })
 				end,
 			},
+			-- { "stevearc/overseer.nvim" },
 		},
 		-- stylua: ignore
 		keys = {
@@ -88,5 +73,9 @@ return {
 			{ "<Leader>dh", function() require("dap.ui.widgets").hover() end, { desc = "Dap: hover" }, },
 			{ "<Leader>dp", function() require("dap.ui.widgets").preview() end, { desc = "Dap: preview" }, },
 		},
+		config = function()
+			-- require("dap.ext.vscode").json_decode = require("overseer.json").decode
+			-- require("overseer").patch_dap(true)
+		end,
 	},
 }
