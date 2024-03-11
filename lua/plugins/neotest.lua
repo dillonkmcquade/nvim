@@ -7,13 +7,14 @@ return {
 		-- Test adapters
 		"nvim-neotest/neotest-python",
 		"nvim-neotest/neotest-go",
+		"marilari88/neotest-vitest",
 	},
 	-- stylua: ignore
 	keys = {
 		{"<Leader>db", function () require("neotest").run.run({strategy = "dap"}) end, desc = "Debug nearest test"},
 		{"<Leader>ta", function () require("neotest").run.run() end, desc = "Run the nearest test"},
-		{ "<Leader>1", function () require("neotest").summary.toggle() end, { desc = "Toggle neotest summary" } },
-		{ "<Leader>!", function () require("neotest").output.open() end, { desc = "Open neotest output" } },
+		{ "<Leader>1", function () require("neotest").summary.toggle() end, desc = "Toggle neotest summary" },
+		{ "<Leader>!", function () require("neotest").output.open() end, desc = "Open neotest output" },
 	},
 	config = function()
 		require("neotest").setup({
@@ -24,6 +25,7 @@ return {
 				require("neotest-go")({
 					recursive_run = true,
 				}),
+				require("neotest-vitest"),
 			},
 			summary = {
 				mappings = {
