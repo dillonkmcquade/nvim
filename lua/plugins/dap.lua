@@ -1,3 +1,19 @@
+-- For selecting DAP adapter with one keybind
+local function dap_select(commands)
+	vim.ui.select(vim.tbl_keys(commands), {
+		prompt = "Select a debug adapter to run",
+	}, function(item)
+		if item == nil then
+			return
+		end
+		local func = commands[item]
+		require("notify")("Running " .. item, "info", {
+			title = "DAP",
+		})
+		func()
+	end)
+end
+
 return {
 	{
 		"mfussenegger/nvim-dap",
@@ -16,31 +32,9 @@ return {
 			-- Configuration
 			vim.fn.sign_define("DapBreakpoint", { text = "🛑", texthl = "", linehl = "", numhl = "" })
 
-			dap.listeners.after.event_initialized["dapui_config"] = function()
-				dapui.open()
-			end
-			dap.listeners.before.event_terminated["dapui_config"] = function()
-				dapui.close()
-			end
-			dap.listeners.before.event_exited["dapui_config"] = function()
-				dapui.close()
-			end
-
-			-- For selecting DAP adapter with one keybind
-			function Dap_select(commands)
-				vim.ui.select(vim.tbl_keys(commands), {
-					prompt = "Select a debug adapter to run",
-				}, function(item)
-					if item == nil then
-						return
-					end
-					local func = commands[item]
-					require("notify")("Running " .. item, "info", {
-						title = "DAP",
-					})
-					func()
-				end)
-			end
+			dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+			dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+			dap.listeners.before.event_exited["dapui_config"] = dapui.close
 
 			-- Keymaps
 			vim.keymap.set("n", "<Leader>df", dapui.toggle, { desc = "Dap: Toggle DAP ui" })
@@ -57,7 +51,7 @@ return {
 			}
 
 			vim.keymap.set("n", "<Leader>db", function()
-				Dap_select(commands)
+				dap_select(commands)
 			end, { desc = "Dap: Select a debug adapter" })
 		end,
 	},
@@ -74,7 +68,7 @@ return {
 			}
 
 			vim.keymap.set("n", "<Leader>db", function()
-				Dap_select(commands)
+				dap_select(commands)
 			end, { desc = "Dap: Select a debug adapter" })
 		end,
 	},
