@@ -48,6 +48,35 @@ return {
 
 			require("mason").setup()
 
+			-- Other tools to have installed
+			local other = {
+				"stylua",
+				"prettierd",
+				"gofumpt",
+				"google-java-format",
+				"pint",
+				"beautysh",
+				"delve",
+				"debugpy",
+			}
+
+			local registry = require("mason-registry")
+
+			-- Auto installs all non-lsp tools defined in other
+			local function ensure_installed()
+				for _, tool in ipairs(other) do
+					local p = registry.get_package(tool)
+					if not p:is_installed() then
+						p:install()
+					end
+				end
+			end
+			if registry.refresh then
+				registry.refresh(ensure_installed)
+			else
+				ensure_installed()
+			end
+
 			require("mason-lspconfig").setup({
 				ensure_installed = vim.tbl_keys(servers),
 				handlers = {

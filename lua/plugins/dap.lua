@@ -41,8 +41,7 @@ return {
 			{
 				"mfussenegger/nvim-dap-python",
 				config = function()
-					local dap_python = require("dap-python")
-					dap_python.setup("/home/dillon/.virtualenvs/debugpy/bin/python")
+					require("dap-python").setup("~/.virtualenvs/debugpy/bin/python")
 				end,
 			},
 		},
