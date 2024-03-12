@@ -21,5 +21,6 @@ return {
 			timeout_ms = 500,
 			lsp_fallback = true,
 		},
+		notify_on_error = true,
 	},
 }

@@ -1,19 +1,3 @@
--- For selecting DAP adapter with one keybind
-local function dap_select(commands)
-	vim.ui.select(vim.tbl_keys(commands), {
-		prompt = "Select a debug adapter to run",
-	}, function(item)
-		if item == nil then
-			return
-		end
-		local func = commands[item]
-		require("notify")("Running " .. item, "info", {
-			title = "DAP",
-		})
-		func()
-	end)
-end
-
 return {
 	{
 		"mfussenegger/nvim-dap",
@@ -61,7 +45,6 @@ return {
 					dap_python.setup("/home/dillon/.virtualenvs/debugpy/bin/python")
 				end,
 			},
-			-- { "stevearc/overseer.nvim" },
 		},
 		-- stylua: ignore
 		keys = {
@@ -73,9 +56,5 @@ return {
 			{ "<Leader>dh", function() require("dap.ui.widgets").hover() end, { desc = "Dap: hover" }, },
 			{ "<Leader>dp", function() require("dap.ui.widgets").preview() end, { desc = "Dap: preview" }, },
 		},
-		config = function()
-			-- require("dap.ext.vscode").json_decode = require("overseer.json").decode
-			-- require("overseer").patch_dap(true)
-		end,
 	},
 }
