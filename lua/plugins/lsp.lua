@@ -1,13 +1,14 @@
 return {
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"neovim/nvim-lspconfig",
 		cmd = { "LspInfo", "Mason" },
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			{ "williamboman/mason.nvim" },
-			{ "neovim/nvim-lspconfig" },
+			{ "williamboman/mason-lspconfig.nvim" },
 			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "folke/neodev.nvim" },
+			{ "folke/neodev.nvim", opts = {} },
+			{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
 		},
 		config = function()
 			-- broadcast cmp_nvim capabilities to language servers
@@ -34,22 +35,31 @@ return {
 					},
 				},
 				lua_ls = {
-					Lua = {
-						workspace = {
-							checkThirdParty = false,
+					settings = {
+						Lua = {
+							workspace = {
+								checkThirdParty = false,
+							},
+							telemetry = { enable = false },
+							completion = {
+								callSnippet = "Replace",
+							},
+							diagnostics = {
+								disable = {
+									"missing-fields",
+								},
+							},
 						},
-						telemetry = { enable = false },
 					},
 				},
 			}
 
-			-- Provides a lua_ls configuration
-			require("neodev").setup()
-
 			require("mason").setup()
 
-			-- Other tools to have installed
-			local other = {
+			local ensure_installed = vim.tbl_keys(servers or {})
+
+			vim.list_extend(ensure_installed, {
+				-- Other tools to have installed
 				"stylua",
 				"prettierd",
 				"gofumpt",
@@ -58,34 +68,17 @@ return {
 				"beautysh",
 				"delve",
 				"debugpy",
-			}
+			})
 
-			local registry = require("mason-registry")
-
-			-- Auto installs all non-lsp tools defined in other
-			local function ensure_installed()
-				for _, tool in ipairs(other) do
-					local p = registry.get_package(tool)
-					if not p:is_installed() then
-						p:install()
-					end
-				end
-			end
-			if registry.refresh then
-				registry.refresh(ensure_installed)
-			else
-				ensure_installed()
-			end
+			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 			require("mason-lspconfig").setup({
 				ensure_installed = vim.tbl_keys(servers),
 				handlers = {
 					function(server_name)
-						require("lspconfig")[server_name].setup({
-							capabilities = capabilities,
-							settings = servers[server_name],
-							filetypes = (servers[server_name] or {}).filetypes,
-						})
+						local server = servers[server_name] or {}
+						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+						require("lspconfig")[server_name].setup(server)
 					end,
 				},
 			})
@@ -127,10 +120,10 @@ return {
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "hrsh7th/cmp-path" },
 			{ "hrsh7th/cmp-buffer" },
-			{ "hrsh7th/cmp-nvim-lua" },
-			{ "L3MON4D3/LuaSnip" },
+			{ "L3MON4D3/LuaSnip", version = "v2.*", build = "make install_jsregexp" },
 			{ "saadparwaiz1/cmp_luasnip" },
 			{ "rafamadriz/friendly-snippets" },
+			{ "onsails/lspkind.nvim" },
 		},
 		config = function()
 			--Autocomplete plugin
@@ -140,7 +133,6 @@ return {
 				sources = {
 					{ name = "path" },
 					{ name = "nvim_lsp" },
-					{ name = "nvim_lua" },
 					{ name = "buffer", keyword_length = 3 },
 					{ name = "luasnip", keyword_length = 2 },
 				},
@@ -158,8 +150,18 @@ return {
 				completion = {
 					completeopt = "menu,menuone,noinsert",
 				},
+				formatting = {
+					format = require("lspkind").cmp_format({
+						with_text = true,
+						menu = {
+							buffer = "[Buffer]",
+							nvim_lsp = "[LSP]",
+							luasnip = "[LuaSnip]",
+							path = "[Path]",
+						},
+					}),
+				},
 			})
-
 			--Required by friendly-snippets
 			require("luasnip.loaders.from_vscode").lazy_load()
 		end,
