@@ -31,7 +31,10 @@ return {
 				jdtls = {
 					cmd = {
 						"jdtls",
-						"--jvm-arg=" .. string.format("-javaagent:%s", vim.fn.expand("$MASON/share/jdtls/lombok.jar")),
+						"--jvm-arg=" .. string.format(
+							"-javaagent:%s",
+							vim.fn.expand("/home/$USER/.local/share/nvim/mason/share/jdtls/lombok.jar")
+						),
 					},
 				},
 				lua_ls = {
@@ -73,7 +76,6 @@ return {
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
 			require("mason-lspconfig").setup({
-				ensure_installed = vim.tbl_keys(servers),
 				handlers = {
 					function(server_name)
 						local server = servers[server_name] or {}
