@@ -28,9 +28,6 @@ return {
 		indent = {
 			enable = true,
 		},
-		autotag = {
-			enable = true,
-		},
 	},
 	config = function(_, opts)
 		local configs = require("nvim-treesitter.configs")

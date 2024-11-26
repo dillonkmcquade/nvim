@@ -17,8 +17,9 @@ return {
 
 			-- servers and their configurations
 			local servers = {
-				tsserver = {},
+				ts_ls = {},
 				gopls = {},
+				templ = {},
 				cssls = {},
 				html = { filetypes = { "html", "twig", "hbs" } },
 				eslint = {},
@@ -66,7 +67,6 @@ return {
 				"stylua",
 				"prettierd",
 				"gofumpt",
-				"google-java-format",
 				"pint",
 				"beautysh",
 				"delve",

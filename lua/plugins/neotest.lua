@@ -2,12 +2,14 @@ return {
 	"nvim-neotest/neotest",
 	dependencies = {
 		"nvim-lua/plenary.nvim",
+		"nvim-neotest/nvim-nio",
 		"antoinemadec/FixCursorHold.nvim",
 		"nvim-treesitter/nvim-treesitter",
 		-- Test adapters
 		"nvim-neotest/neotest-python",
 		"nvim-neotest/neotest-go",
 		"marilari88/neotest-vitest",
+		"rcasia/neotest-java",
 	},
 	-- stylua: ignore
 	keys = {
@@ -26,6 +28,7 @@ return {
 					recursive_run = true,
 				}),
 				require("neotest-vitest"),
+				require("neotest-java"),
 			},
 			summary = {
 				mappings = {
