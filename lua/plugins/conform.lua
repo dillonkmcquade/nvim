@@ -7,6 +7,7 @@ return {
 			javascript = { "prettierd" },
 			typescriptreact = { "prettierd" },
 			javascriptreact = { "prettierd" },
+			python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
 			json = { "prettierd" },
 			css = { "prettierd" },
 			html = { "djlint", "prettierd" },

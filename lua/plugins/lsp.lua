@@ -21,14 +21,27 @@ return {
 				gopls = {},
 				templ = {},
 				cssls = {},
-				html = { filetypes = { "html", "twig", "hbs" } },
+				html = { filetypes = { "html", "twig", "hbs", "htmldjango" } },
 				eslint = {},
-				ruff_lsp = {},
+				ruff = {},
 				bashls = {},
 				dockerls = {},
 				docker_compose_language_service = {},
 				texlab = {},
-				pyright = {},
+				pyright = {
+					settings = {
+						pyright = {
+							-- Using Ruff's import organizer
+							disableOrganizeImports = true,
+						},
+						python = {
+							analysis = {
+								-- Ignore all files for analysis to exclusively use Ruff for linting
+								ignore = { "*" },
+							},
+						},
+					},
+				},
 				jdtls = {
 					cmd = {
 						"jdtls",
