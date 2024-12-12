@@ -80,7 +80,6 @@ return {
 				"stylua",
 				"prettierd",
 				"gofumpt",
-				"pint",
 				"beautysh",
 				"delve",
 				"debugpy",
